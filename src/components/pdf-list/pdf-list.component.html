@@ -1,0 +1,87 @@
+<section class="pdf-list-container">
+  <div class="list-header">
+    <h2>PDFs Salvos</h2>
+    <span class="count-badge">{{ pdfs.length }} arquivo(s)</span>
+  </div>
+
+  <div *ngIf="pdfs.length === 0" class="empty-state">
+    <div class="empty-icon">
+      <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+        <polyline points="14,2 14,8 20,8"/>
+      </svg>
+    </div>
+    <h3>Nenhum PDF encontrado</h3>
+    <p>Faça upload de seus primeiros arquivos PDF para começar.</p>
+  </div>
+
+  <div *ngIf="pdfs.length > 0" class="pdf-grid">
+    <div
+      *ngFor="let pdf of pdfs; trackBy: trackByPdfId"
+      class="pdf-card"
+      [class.deleting]="deletingIds.has(pdf.id)"
+    >
+      <div class="pdf-thumbnail">
+        <img
+          [src]="getThumbnailUrl(pdf)"
+          [alt]="pdf.originalname"
+          (error)="onThumbnailError($event, pdf)"
+          class="thumbnail-image"
+        >
+        <div class="fallback-icon">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+            <polyline points="14,2 14,8 20,8"/>
+          </svg>
+        </div>
+        <div class="thumbnail-overlay">
+          <button
+            class="action-btn view-btn"
+            (click)="viewPdf(pdf)"
+            title="Visualizar PDF"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+              <circle cx="12" cy="12" r="3"/>
+            </svg>
+          </button>
+          <button
+            class="action-btn download-btn"
+            (click)="downloadPdf(pdf)"
+            title="Baixar PDF"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+              <polyline points="7,10 12,15 17,10"/>
+              <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+          </button>
+          <button
+            class="action-btn delete-btn"
+            (click)="deletePdf(pdf)"
+            [disabled]="deletingIds.has(pdf.id)"
+            title="Excluir PDF"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polyline points="3,6 5,6 21,6"/>
+              <path d="m19,6v14a2,2 0 0,1 -2,2H7a2,2 0 0,1 -2,-2V6m3,0V4a2,2 0 0,1 2,-2h4a2,2 0 0,1 2,2v2"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div class="pdf-info">
+        <h3 class="pdf-title" [title]="pdf.originalname">{{ pdf.originalname }}</h3>
+        <div class="pdf-meta">
+          <span class="pdf-size">{{ formatFileSize(pdf.size) }}</span>
+          <span class="pdf-date">{{ formatDate(pdf.uploadDate) }}</span>
+        </div>
+      </div>
+
+      <div *ngIf="deletingIds.has(pdf.id)" class="deleting-overlay">
+        <div class="spinner"></div>
+        <span>Excluindo...</span>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,72 @@
+<section class="upload-container">
+  <div
+    class="upload-area"
+    [class.drag-over]="isDragOver"
+    [class.uploading]="isUploading"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave($event)"
+    (drop)="onDrop($event)"
+    (click)="fileInput.click()"
+  >
+    <div class="upload-content">
+      <div class="upload-icon">
+        <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+          <polyline points="14,2 14,8 20,8"/>
+        </svg>
+      </div>
+      <h3>Arrastar PDFs aqui</h3>
+      <p>ou clique para selecionar arquivos</p>
+      <div class="upload-info">
+        <span>Máximo: 10 arquivos, 7MB cada</span>
+      </div>
+    </div>
+
+    <div *ngIf="isUploading" class="upload-progress">
+      <div class="spinner"></div>
+      <span>Enviando arquivos...</span>
+    </div>
+  </div>
+
+  <input
+    #fileInput
+    type="file"
+    multiple
+    accept=".pdf"
+    (change)="onFileSelected($event)"
+    style="display: none"
+  >
+
+  <div *ngIf="selectedFiles.length > 0" class="selected-files">
+    <h4>Arquivos selecionados:</h4>
+    <div class="file-list">
+      <div *ngFor="let file of selectedFiles" class="file-item">
+        <span class="file-name">{{ file.name }}</span>
+        <span class="file-size">{{ formatFileSize(file.size) }}</span>
+        <button
+          class="remove-btn"
+          (click)="removeFile(file)"
+          [disabled]="isUploading"
+        >×</button>
+      </div>
+    </div>
+
+    <div class="upload-actions">
+      <button
+        class="btn btn-primary"
+        (click)="upload()"
+        [disabled]="isUploading || selectedFiles.length === 0"
+      >
+        <span *ngIf="!isUploading">Enviar {{ selectedFiles.length }} arquivo(s)</span>
+        <span *ngIf="isUploading">Enviando...</span>
+      </button>
+      <button
+        class="btn btn-secondary"
+        (click)="clearFiles()"
+        [disabled]="isUploading"
+      >
+        Limpar
+      </button>
+    </div>
+  </div>
+</section>
